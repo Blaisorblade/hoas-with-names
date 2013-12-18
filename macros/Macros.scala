@@ -1,6 +1,9 @@
 import scala.reflect.macros.Context
 
 object Macros extends UntypedLambdaCalc {
+  def getSrcLoc[T](c: Context)(expr: c.Expr[T]) = {
+  }
+
   //Let's have a macro returning Lambda. That is, Macros.Lambda, where Macros is the runtime singleton object Macros.
   def lambda(hoasBody: Term => Term): Lambda = macro lambda_impl
 
@@ -20,6 +23,7 @@ object Macros extends UntypedLambdaCalc {
           //""
           (c.fresh("x_"), false) //Reuse freshname generator from macros.
       }
+    //c.Expr(q"srcloc(loc => Lambda($name, loc, $userSpecified, $hoasBody))")
     c.Expr(q"Lambda($name, $userSpecified, $hoasBody)")
   }
 }
