@@ -20,7 +20,6 @@ object Macros extends UntypedLambdaCalc {
         case Expr(Function(List(ValDef(mods, paramName, typ, _)), body)) =>
           (paramName.decoded, true)
         case _ =>
-          //""
           (c.fresh("x_"), false) //Reuse freshname generator from macros.
       }
     reify(Lambda(c.literal(name).splice, c.literal(userSpecified).splice, hoasBody.splice))
