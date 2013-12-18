@@ -23,8 +23,7 @@ object Macros extends UntypedLambdaCalc {
           //""
           (c.fresh("x_"), false) //Reuse freshname generator from macros.
       }
-    //c.Expr(q"srcloc(loc => Lambda($name, loc, $userSpecified, $hoasBody))")
-    c.Expr(q"Lambda($name, $userSpecified, $hoasBody)")
+    reify(Lambda(c.literal(name).splice, c.literal(userSpecified).splice, hoasBody.splice))
   }
 }
 
