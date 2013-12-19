@@ -1,5 +1,21 @@
 import scala.language.implicitConversions
 
+trait Counter {
+  def getNext(): Int
+}
+
+/**
+ * Non-thread-safe counter.
+ */
+class StdCounter extends Counter {
+  private[this] var idx = 0
+  def getNext() = {
+    val res = idx
+    idx += 1
+    res
+  }
+}
+
 trait Names {
   sealed trait Name {
     def name: String
@@ -10,6 +26,9 @@ trait Names {
     override val name = s"${prefix}_${idx}"
   }
   implicit def string2name(name: String): Name = StringName(name)
+
+  private[this] val ctr: Counter = new StdCounter()
+  def fresh() = IdxStringName("fresh", ctr.getNext())
 }
 
 trait UntypedLambdaCalc extends Names {
