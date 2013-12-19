@@ -7,7 +7,7 @@ trait Names {
   case class StringName(name: String) extends Name
   case class IdxStringName(prefix: String, idx: Int) extends Name {
     //It's a val to cache the result.
-    override val name = prefix + idx
+    override val name = s"${prefix}_${idx}"
   }
   implicit def string2name(name: String): Name = StringName(name)
 }
