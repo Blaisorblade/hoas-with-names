@@ -10,6 +10,24 @@ object NamedHoasUsage extends App {
   println(lambda(id compose id)) //Do it again.
   println(lambda(x => lambda(y => x)))
   println(lambda(x => lambda(y => y)))
+
+  println("Can you spot the differences?")
+  //Break prettyprinting.
+  println(lambda {
+      x =>
+        val y = x
+        lambda { x =>
+          x
+        }
+      })
+  println(lambda {
+      x =>
+        val y = x
+        lambda { x =>
+          y
+        }
+      })
+  println("No? Then I guess pretty printing is broken.")
 }
 
 // vim: set ts=8 sw=2 et:
