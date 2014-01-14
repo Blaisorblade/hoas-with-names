@@ -1,4 +1,10 @@
-object NamedHoasUsage extends App {
+trait LambdaUtils {
+  import Macros._
+  def runtimeLet(value: Term)(hoasBody: Term => Term): Term = Apply(lambda(hoasBody), value)
+}
+
+
+object NamedHoasUsage extends App with LambdaUtils {
   import Macros._
   println(lambda(x => x))
   println(lambda(identity)) //Test freshname generation.
@@ -11,6 +17,15 @@ object NamedHoasUsage extends App {
   println(lambda(x => lambda(y => x)))
   println(lambda(x => lambda(y => y)))
 
+  println()
+  println("runtimeLet must guess the variable name:")
+  println(lambda(y => runtimeLet(y)(z => Apply(y, z))))
+  println()
+  println("macroLet just works:")
+  println(lambda(y => macroLet(y)(z => Apply(y, z))))
+
+  println()
+  println()
   println("Can you spot the differences?")
   //Break prettyprinting.
   println(lambda {

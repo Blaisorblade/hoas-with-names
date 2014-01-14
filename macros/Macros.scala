@@ -31,6 +31,20 @@ object Macros extends UntypedLambdaCalc {
     }
     reify(Lambda(c.literal(name).splice, c.literal(userSpecified).splice, hoasBody.splice))
   }
+
+  //I thought I'd need to reuse getArgName, but since let is a derived operation and can be expressed through lambda, macroLet_impl can reuse directly lambda_impl.
+
+  def macroLet(value: Term)(hoasBody: Term => Term): Term = macro macroLet_impl
+  //Why do we need the dependent type for Term, but not for Term => Term? This seems a bug in the function producing the expected shape.
+  def macroLet_impl(c: Context { type PrefixType = Macros.type })(value: c.Expr[c.prefix.value.Term])(hoasBody: c.Expr[Term => Term]): c.Expr[c.prefix.value.Term] = {
+    import c.universe.{Apply => _, _}
+    //what's below does not work because we can't use macros in the same compilation unit:
+    //reify(Apply(lambda(hoasBody.splice), value.splice))
+    //But we can invoke the macro definition:
+    reify(Apply(lambda_impl(c)(hoasBody).splice, value.splice))
+    //The receiver of a splice call can be an arbitrary expression, though that does not come for free since reify is a (primitive) macro.
+  }
+//
 }
 
 // vim: set ts=8 sw=2 et:
