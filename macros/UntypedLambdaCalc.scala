@@ -12,7 +12,7 @@ trait UntypedLambdaCalc {
     }
   }
 
-  case class Apply(fun: Term, arg: Term)
+  case class Apply(fun: Term, arg: Term) extends Term
 
   //TODO: convert to some other first-order representation for pattern-matching. Consider using deBrujin terms, following for instance
   //"Unembedding domain-specific languages".
