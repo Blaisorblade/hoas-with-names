@@ -15,10 +15,19 @@ object Macros extends UntypedLambdaCalc {
 
   def lambda_impl(c: Context { type PrefixType = Macros.type })(hoasBody: c.Expr[Term => Term]): c.Expr[c.prefix.value.Lambda] = {
     import c.universe._
+    println(s"""|
+                |"${show(hoasBody.tree)}" — "${showRaw(hoasBody.tree)}"
+                |""".stripMargin)
     val (name, userSpecified) =
-      hoasBody match {
-        case Expr(Function(List(ValDef(mods, paramName, typ, _)), body)) =>
+      hoasBody.tree match {
+        //case Function(List(ValDef(mods, paramName, typ, _)), body) =>
+
+        case q"(${q"val $paramName = _"}) => $body" =>
+        //case q"(${ValDef(mods, paramName, typ, _)}) => $body" =>
           (paramName.decoded, true)
+        case q"($param) => $body" =>
+          println(s""""${show(param)}" — "${showRaw(param)}"""")
+          (param.name.decoded, true)
         case _ =>
           //""
           (c.fresh("x_"), false) //Reuse freshname generator from macros.
