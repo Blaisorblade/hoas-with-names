@@ -22,7 +22,9 @@ object Macros extends UntypedLambdaCalc {
       hoasBody.tree match {
         //case Function(List(ValDef(mods, paramName, typ, _)), body) =>
 
+        //Does not work, because this tree is rather different from the one we need to match.
         case q"(${q"val $paramName = _"}) => $body" =>
+          //Would work
         //case q"(${ValDef(mods, paramName, typ, _)}) => $body" =>
           (paramName.decoded, true)
         case q"($param) => $body" =>
