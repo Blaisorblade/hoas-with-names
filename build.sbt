@@ -16,9 +16,9 @@ libraryDependencies in ThisBuild += "org.scala-lang" % "scala-reflect" % scalaVe
 
 // Add the macro-paradise compiler plugin: This is needed to use quasiquotes
 // and other extended macro features.
-// This dependency is only needed at compile time: the generated code does not
-// need any additional support library.
-libraryDependencies in ThisBuild += compilerPlugin("org.scalamacros" % "paradise" % "2.0.0-M2" cross CrossVersion.full)
+libraryDependencies in ThisBuild += compilerPlugin("org.scalamacros" % "paradise" % "2.0.0-M3" cross CrossVersion.full)
+
+libraryDependencies in ThisBuild += "org.scalamacros" % "quasiquotes" % "2.0.0-M3" cross CrossVersion.full
 //Most documentation uses addCompilerPlugin(dependency), but that's equivalent to the following:
 //  libraryDependencies += compilerPlugin(dependency)
 //We instead use compilerPlugin to be able to specify the scope.
