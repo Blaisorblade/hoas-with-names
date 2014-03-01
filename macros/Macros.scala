@@ -1,4 +1,4 @@
-import scala.reflect.macros.Context
+import scala.reflect.macros.blackbox.Context
 
 object MacroImpls {
   def getSrcLoc[T](c: Context)(expr: c.Expr[T]) = {
@@ -10,7 +10,7 @@ object MacroImpls {
 //      case Function(List(ValDef(mods, paramName, typ, _)), body) =>
 //        Some(paramName.decoded)
       case q"($param) => $body" =>
-        Some(param.name.decoded)
+        Some(param.name.decodedName.toString)
       case _ =>
         None
     }
@@ -33,7 +33,7 @@ object MacroImpls {
     import c.universe._
     val (name, userSpecified) = getArgName(c)(hoasBody) match {
       case Some(name) => (name, true)
-      case None => (c.fresh("x_"), false) //Reuse freshname generator from macros.
+      case None => (c.freshName("x_"), false) //Reuse freshname generator from macros.
     }
     c.Expr(q"Lambda($name, $userSpecified, $hoasBody)")
   }
