@@ -1,18 +1,12 @@
-object Calc extends LambdaBuilder with UntypedLambdaCalc
-object Macros extends NamedLambdaBuilder {
-  val l: Calc.type = Calc
-}
-
+object Macros extends NamedLambdaBuilder with UntypedLambdaCalc
 trait LambdaUtils {
-  import Macros.{Lambda => _, Term => _, _}
-  import Calc._
+  import Macros._
   def runtimeLet(value: Term)(hoasBody: Term => Term): Term = Apply(lambda(hoasBody), value)
 }
 
 
 object NamedHoasUsage extends App with LambdaUtils {
-  import Macros.{Lambda => _, Term => _, _}
-  import Calc._
+  import Macros._
 
   println(lambda(x => x))
   println(lambda(x_+ => x_+))

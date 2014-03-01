@@ -45,18 +45,10 @@ object MacroImpls {
   }
 }
 
-trait LambdaBuilder {
+//We could make LambdaBuilder a mixin, but apparently this breaks in 2.10.
+trait NamedLambdaBuilder {
   type Term
   type Lambda
-}
-
-//Could be a decorator, but with static dispatch, so let's not do that
-trait NamedLambdaBuilder {
-  val l: LambdaBuilder
-  //import l._
-  //Workaround SI-8356.
-  type Term = l.Term
-  type Lambda = l.Lambda
   //Let's have a macro returning Lambda. That is, Macros.Lambda, where Macros is the runtime singleton object Macros.
   def lambda(hoasBody: Term => Term): Lambda = macro MacroImpls.lambda_impl
   def macroLet(value: Term)(hoasBody: Term => Term): Term = macro MacroImpls.macroLet_impl
