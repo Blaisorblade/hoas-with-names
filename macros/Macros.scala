@@ -29,7 +29,7 @@ object MacroImpls {
   //consequence of SI-6447 (https://issues.scala-lang.org/browse/SI-6447), fixed
   //in 2.11. For some reason, though, the bug does not cause any more a compiler
   //error.
-  def lambda_impl(c: Context { type PrefixType = NamedLambdaBuilder })(hoasBody: c.Expr[c.prefix.value.Term => c.prefix.value.Term]): c.Expr[c.prefix.value.Lambda] = {
+  def lambda_impl(c: Context { type PrefixType = NamedLambdaBuilder with LambdaBuilder })(hoasBody: c.Expr[c.prefix.value.Term => c.prefix.value.Term]): c.Expr[c.prefix.value.Lambda] = {
     import c.universe._
     val (name, userSpecified) = getArgName(c)(hoasBody) match {
       case Some(name) => (name, true)
@@ -39,16 +39,25 @@ object MacroImpls {
   }
 
   //I thought I'd need to reuse getArgName, but since let is a derived operation and can be expressed through lambda, macroLet_impl can reuse directly lambda_impl.
-  def macroLet_impl(c: Context { type PrefixType = NamedLambdaBuilder })(value: c.Expr[c.prefix.value.Term])(hoasBody: c.Expr[c.prefix.value.Term => c.prefix.value.Term]): c.Expr[c.prefix.value.Term] = {
+  def macroLet_impl(c: Context { type PrefixType = NamedLambdaBuilder with LambdaBuilder })(value: c.Expr[c.prefix.value.Term])(hoasBody: c.Expr[c.prefix.value.Term => c.prefix.value.Term]): c.Expr[c.prefix.value.Term] = {
     import c.universe.{Apply => _, _}
     c.Expr(q"Apply(${lambda_impl(c)(hoasBody)}, $value)")
   }
 }
 
-//We could make LambdaBuilder a mixin, but apparently this breaks in 2.10.
-trait NamedLambdaBuilder {
+/**
+  * Interface for the component providing the calculus.
+  * Currently incomplete (the constructors for Apply and Lambda are missing).
+  */
+//TODO: Allow for a type parameter and a bound here.
+trait LambdaBuilder {
   type Term
   type Lambda
+}
+
+//We could make LambdaBuilder a mixin, but apparently this breaks in 2.10.
+trait NamedLambdaBuilder {
+  this: LambdaBuilder =>
   //Let's have a macro returning Lambda. That is, Macros.Lambda, where Macros is the runtime singleton object Macros.
   def lambda(hoasBody: Term => Term): Lambda = macro MacroImpls.lambda_impl
   def macroLet(value: Term)(hoasBody: Term => Term): Term = macro MacroImpls.macroLet_impl

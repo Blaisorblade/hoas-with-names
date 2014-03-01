@@ -31,7 +31,7 @@ trait Names {
   def fresh() = IdxStringName("fresh", ctr.getNext())
 }
 
-trait UntypedLambdaCalc extends Names {
+trait UntypedLambdaCalc extends Names with LambdaBuilder {
   //A HOAS-based term representation for lambda-calculus. Function terms carry
   //a name, but this is only to remember what name the user specified, and
   //should only be used for cosmetic purposes, such as making pretty-printing
