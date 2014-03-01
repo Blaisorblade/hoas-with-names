@@ -1,14 +1,23 @@
+object Calc extends LambdaBuilder with UntypedLambdaCalc
+object Macros extends NamedLambdaBuilder {
+  val l: Calc.type = Calc
+}
+
 trait LambdaUtils {
-  import Macros._
+  import Macros.{Lambda => _, Term => _, _}
+  import Calc._
   def runtimeLet(value: Term)(hoasBody: Term => Term): Term = Apply(lambda(hoasBody), value)
 }
 
 
 object NamedHoasUsage extends App with LambdaUtils {
-  import Macros._
+  import Macros.{Lambda => _, Term => _, _}
+  import Calc._
+
   println(lambda(x => x))
   println(lambda(x_+ => x_+))
   println(lambda(y => y))
+
   println(lambda(identity)) //Test freshname generation.
   println(lambda(identity)) //Do it again.
   println(lambda(identity(x => x)))
