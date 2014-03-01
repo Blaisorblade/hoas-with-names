@@ -4,34 +4,13 @@ object Macros extends UntypedLambdaCalc {
   def getSrcLoc[T](c: Context)(expr: c.Expr[T]) = {
   }
 
-/*
-    println(s"""|
-                |"${show(hoasBody.tree)}" — "${showRaw(hoasBody.tree)}"
-                |""".stripMargin)
-    val (name, userSpecified) =
-      hoasBody.tree match {
-        //case Function(List(ValDef(mods, paramName, typ, _)), body) =>
-
-        //Does not work, because this tree is rather different from the one we need to match.
-        case q"(${q"val $paramName = _"}) => $body" =>
-          //Would work
-        //case q"(${ValDef(mods, paramName, typ, _)}) => $body" =>
-          (paramName.decoded, true)
-        case q"($param) => $body" =>
-          println(s""""${show(param)}" — "${showRaw(param)}"""")
-          (param.name.decoded, true)
-        case _ =>
-          //""
-          (c.fresh("x_"), false) //Reuse freshname generator from macros.
-      }
-    //c.Expr(q"srcloc(loc => Lambda($name, loc, $userSpecified, $hoasBody))")
-    c.Expr(q"Lambda($name, $userSpecified, $hoasBody)")
- */
   def getArgName[S, T](c: Context)(fun: c.Expr[S => T]): Option[String] = {
     import c.universe._
-    fun match {
-      case Expr(Function(List(ValDef(mods, paramName, typ, _)), body)) =>
-        Some(paramName.decoded)
+    fun.tree match {
+//      case Function(List(ValDef(mods, paramName, typ, _)), body) =>
+//        Some(paramName.decoded)
+      case q"($param) => $body" =>
+        Some(param.name.decoded)
       case _ =>
         None
     }
@@ -52,7 +31,7 @@ object Macros extends UntypedLambdaCalc {
       case Some(name) => (name, true)
       case None => (c.fresh("x_"), false) //Reuse freshname generator from macros.
     }
-    reify(Lambda(c.literal(name).splice, c.literal(userSpecified).splice, hoasBody.splice))
+    c.Expr(q"Lambda($name, $userSpecified, $hoasBody)")
   }
 
   //I thought I'd need to reuse getArgName, but since let is a derived operation and can be expressed through lambda, macroLet_impl can reuse directly lambda_impl.
@@ -61,13 +40,8 @@ object Macros extends UntypedLambdaCalc {
   //Why do we need the dependent type for Term, but not for Term => Term? This seems a bug in the function producing the expected shape.
   def macroLet_impl(c: Context { type PrefixType = Macros.type })(value: c.Expr[c.prefix.value.Term])(hoasBody: c.Expr[Term => Term]): c.Expr[c.prefix.value.Term] = {
     import c.universe.{Apply => _, _}
-    //what's below does not work because we can't use macros in the same compilation unit:
-    //reify(Apply(lambda(hoasBody.splice), value.splice))
-    //But we can invoke the macro definition:
-    reify(Apply(lambda_impl(c)(hoasBody).splice, value.splice))
-    //The receiver of a splice call can be an arbitrary expression, though that does not come for free since reify is a (primitive) macro.
+    c.Expr(q"Apply(${lambda_impl(c)(hoasBody)}, $value)")
   }
-//
 }
 
 // vim: set ts=8 sw=2 et:
