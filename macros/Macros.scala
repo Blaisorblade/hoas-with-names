@@ -4,6 +4,29 @@ object Macros extends UntypedLambdaCalc {
   def getSrcLoc[T](c: Context)(expr: c.Expr[T]) = {
   }
 
+/*
+    println(s"""|
+                |"${show(hoasBody.tree)}" — "${showRaw(hoasBody.tree)}"
+                |""".stripMargin)
+    val (name, userSpecified) =
+      hoasBody.tree match {
+        //case Function(List(ValDef(mods, paramName, typ, _)), body) =>
+
+        //Does not work, because this tree is rather different from the one we need to match.
+        case q"(${q"val $paramName = _"}) => $body" =>
+          //Would work
+        //case q"(${ValDef(mods, paramName, typ, _)}) => $body" =>
+          (paramName.decoded, true)
+        case q"($param) => $body" =>
+          println(s""""${show(param)}" — "${showRaw(param)}"""")
+          (param.name.decoded, true)
+        case _ =>
+          //""
+          (c.fresh("x_"), false) //Reuse freshname generator from macros.
+      }
+    //c.Expr(q"srcloc(loc => Lambda($name, loc, $userSpecified, $hoasBody))")
+    c.Expr(q"Lambda($name, $userSpecified, $hoasBody)")
+ */
   def getArgName[S, T](c: Context)(fun: c.Expr[S => T]): Option[String] = {
     import c.universe._
     fun match {

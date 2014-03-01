@@ -8,6 +8,7 @@ object NamedHoasUsage extends App with LambdaUtils {
   import Macros._
   println(lambda(x => x))
   println(lambda(x_+ => x_+))
+  println(lambda(y => y))
   println(lambda(identity)) //Test freshname generation.
   println(lambda(identity)) //Do it again.
   println(lambda(identity(x => x)))
