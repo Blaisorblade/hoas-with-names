@@ -25,7 +25,11 @@ object Macros extends UntypedLambdaCalc {
   //compiler that PrefixType is Macros.type! However, there we cannot really
   //remark on the difference between compile-time and runtime Macros.
 
+  //We don't use c.prefix.value everywhere we need, but we should. This is a consequence of SI-6447 (https://issues.scala-lang.org/browse/SI-6447), fixed in 2.11.
   def lambda_impl(c: Context { type PrefixType = Macros.type })(hoasBody: c.Expr[Term => Term]): c.Expr[c.prefix.value.Lambda] = {
+
+  //Fixed version:
+  //def lambda_impl(c: Context { type PrefixType = Macros.type })(hoasBody: c.Expr[c.prefix.value.Term => c.prefix.value.Term]): c.Expr[c.prefix.value.Lambda] = {
     import c.universe._
     val (name, userSpecified) = getArgName(c)(hoasBody) match {
       case Some(name) => (name, true)
@@ -37,8 +41,11 @@ object Macros extends UntypedLambdaCalc {
   //I thought I'd need to reuse getArgName, but since let is a derived operation and can be expressed through lambda, macroLet_impl can reuse directly lambda_impl.
 
   def macroLet(value: Term)(hoasBody: Term => Term): Term = macro macroLet_impl
-  //Why do we need the dependent type for Term, but not for Term => Term? This seems a bug in the function producing the expected shape.
+  //SI-6447 again.
   def macroLet_impl(c: Context { type PrefixType = Macros.type })(value: c.Expr[c.prefix.value.Term])(hoasBody: c.Expr[Term => Term]): c.Expr[c.prefix.value.Term] = {
+  //Correct type:
+  //def macroLet_impl(c: Context { type PrefixType = Macros.type })(value: c.Expr[c.prefix.value.Term])(hoasBody: c.Expr[c.prefix.value.Term => c.prefix.value.Term]): c.Expr[c.prefix.value.Term] = {
+
     import c.universe.{Apply => _, _}
     c.Expr(q"Apply(${lambda_impl(c)(hoasBody)}, $value)")
   }
