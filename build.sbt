@@ -9,7 +9,7 @@ val root = project in file(".") dependsOn macros
 //We need to specify the next build settings for all projects. Hence, we use ThisBuild.
 scalacOptions in ThisBuild ++= Seq("-language:experimental.macros", "-feature", "-deprecation", "-unchecked", "-language:implicits")
 
-scalaVersion in ThisBuild := "2.11.0-RC1"
+scalaVersion in ThisBuild := "2.11.2"
 
 // Add Scala reflection library. This is is needed for all projects using reflection, macros or both.
 libraryDependencies in ThisBuild += "org.scala-lang" % "scala-reflect" % scalaVersion.value
