@@ -7,7 +7,7 @@ val root = project in file(".") dependsOn macros
 //resolvers += Resolver.sonatypeRepo("releases")
 
 //We need to specify the next build settings for all projects. Hence, we use ThisBuild.
-scalacOptions in ThisBuild ++= Seq("-language:experimental.macros", "-feature", "-deprecation", "-unchecked", "-language:implicits")
+scalacOptions in ThisBuild ++= Seq("-language:experimental.macros", "-feature", "-deprecation", "-unchecked", "-language:implicitConversions")
 
 scalaVersion in ThisBuild := "2.11.2"
 
