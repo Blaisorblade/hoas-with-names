@@ -1,7 +1,7 @@
 hoas-with-names
 ===============
 
-Represent functions using higher-order asbtract syntax (HOAS) *using macros to save names*.
+Represent functions using higher-order abstract syntax (HOAS) *using macros to save names*.
 
 To try this out, launch sbt and type the `run` command. This will show the reification of the terms in [`NamedHoasUsage.scala`](NamedHoasUsage.scala), which preserves user-specified names! However, those names are there for strictly cosmetic purposes - they do not represent the binding structure accurately.
 
